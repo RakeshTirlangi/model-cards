@@ -1,0 +1,2373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Medical AI Model Cards</title>
+  <meta name="description"
+    content="Comprehensive model cards for medical AI foundation models. Brain, CT, MRI, and 3D volume processing benchmarks.">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div class="app-container">
+    <nav class="sidebar">
+      <h1 class="logo">Model Cards</h1>
+      <p class="logo-sub">TANUH.AI Lab</p>
+      <ul class="nav-list">
+        <li><button class="nav-btn active" data-target="braingpt">BrainGPT</button></li>
+        <li><button class="nav-btn" data-target="merlin">Merlin</button></li>
+        <li><button class="nav-btn" data-target="med3dvlm">Med3DVLM</button></li>
+        <li><button class="nav-btn" data-target="rad3d">RAD3D-Prefix</button></li>
+        <li><button class="nav-btn" data-target="vilam3">VILA-M3</button></li>
+        <li><button class="nav-btn" data-target="medgemma15">MedGemma 1.5</button></li>
+        <li class="nav-divider"></li>
+        <li><button class="nav-btn" data-target="qwen35">Qwen3.5-27B</button></li>
+        <li><button class="nav-btn" data-target="qwen25">Qwen2.5-7B-Instruct</button></li>
+        <li><button class="nav-btn" data-target="radfm">RadFM</button></li>
+        <li><button class="nav-btn" data-target="medgemma27">MedGemma 27B</button></li>
+      </ul>
+    </nav>
+    <main class="content-area">
+
+      <!-- ================================================================ -->
+      <!-- BrainGPT -->
+      <!-- ================================================================ -->
+      <section id="braingpt" class="model-card active fade-in">
+        <header class="card-header">
+          <h2>BrainGPT</h2>
+          <p class="subtitle">Clinically Visual Instruction-Tuned MLLM for 3D Brain CT Radiology Report Generation</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>BrainGPT</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v1.0</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>Multimodal Large Language Model (MLLM)</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>Otter/OpenFlamingo framework (CLIP ViT/14 + Perceiver + LLaMA-7B)</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>~7 Billion (dominated by LLaMA-7B)</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>3D Non-contrast Head/Brain CT Volumes</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>Academic Researchers</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>Various recent preprints (2024-2025)</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Research Use Only</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases</h4>
+            <ul>
+              <li>3D Brain CT Radiology Report Generation (Image-to-Text)</li>
+              <li>Automated diagnosis of brain abnormalities (hemorrhages, lesions)</li>
+              <li>Clinical reasoning modeling for neuroradiology workflows</li>
+            </ul>
+            <h4>Target Users</h4>
+            <ul>
+              <li>Neuroradiologists and clinical AI researchers</li>
+              <li>Hospitals looking to automate initial CT report drafting</li>
+              <li>Medical AI engineers developing diagnostic assistants</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Sole diagnostic decision-making without human oversight</li>
+              <li>2D image analysis (optimized explicitly for 3D volumes)</li>
+              <li>Modalities other than non-contrast Head/Brain CT</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Component</th>
+                <th>Standard VLM (e.g., LLaVA)</th>
+                <th>BrainGPT</th>
+              </tr>
+              <tr>
+                <td>Vision Input</td>
+                <td>2D Image slices</td>
+                <td>Native 3D Volumetric CT</td>
+              </tr>
+              <tr>
+                <td>Vision Encoder</td>
+                <td>2D CLIP ViT</td>
+                <td>3D-adapted CLIP ViT/14</td>
+              </tr>
+              <tr>
+                <td>Training Paradigm</td>
+                <td>Standard Instruction Tuning</td>
+                <td>Clinical Visual Instruction Tuning (CVIT)</td>
+              </tr>
+              <tr>
+                <td>Frozen Modules</td>
+                <td>Only LLM frozen</td>
+                <td>Most blocks frozen to maintain efficiency</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">BrainGPT Architecture<span>Multimodal Large Language Model / VLM</span></div>
+            <div class="arch-container">
+              <div class="arch-node">3D Non-contrast CT Volume Input</div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">VISION ENCODER<span>(OpenAI CLIP ViT/14 adapted for 3D medical volumes)</span>
+              </div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">PERCEIVER RESAMPLER<span>(Aligns dense 3D visual features to language space)</span>
+              </div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">LARGE LANGUAGE MODEL<span>(LLaMA-7B text generation backbone)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">Radiology Report Generation (Natural Language)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Training Details</h3>
+          <table>
+            <tr>
+              <th>Dataset</th>
+              <td>3D-BrainCT</td>
+            </tr>
+            <tr>
+              <th>Volume Count</th>
+              <td>~18,885 paired 3D CT scans</td>
+            </tr>
+            <tr>
+              <th>Annotations</th>
+              <td>Paired diagnostic text reports</td>
+            </tr>
+            <tr>
+              <th>Training Type</th>
+              <td>Clinical Visual Instruction Tuning (CVIT)</td>
+            </tr>
+            <tr>
+              <th>Hardware</th>
+              <td>Multi-GPU clusters (A100 equivalent)</td>
+            </tr>
+          </table>
+          <h4>Training Protocol</h4>
+          <ol>
+            <li>Initialize with Otter/OpenFlamingo base weights.</li>
+            <li>Adapt the vision encoder for 3D medical volumes.</li>
+            <li>Freeze the majority of model blocks (except input/output embeddings and cross-attention).</li>
+            <li>Fine-tune using Clinical Visual Instruction Tuning (CVIT) on the 3D-BrainCT dataset.</li>
+          </ol>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <h4>Standard NLG Metrics</h4>
+          <table>
+            <tr>
+              <th>Metric</th>
+              <th>Score</th>
+            </tr>
+            <tr>
+              <td>BLEU-1</td>
+              <td>44.35</td>
+            </tr>
+            <tr>
+              <td>BLEU-4</td>
+              <td>20.38</td>
+            </tr>
+            <tr>
+              <td>METEOR</td>
+              <td>30.13</td>
+            </tr>
+            <tr>
+              <td>ROUGE-L</td>
+              <td>47.60</td>
+            </tr>
+            <tr>
+              <td>CIDEr-R</td>
+              <td>211.77</td>
+            </tr>
+          </table>
+          <h4>Clinical Diagnostic Metrics (FORTE Framework)</h4>
+          <table>
+            <tr>
+              <th>Diagnostic Component</th>
+              <th>F1-Score</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Degree</td>
+              <td>0.661</td>
+              <td>Captures severity and quantity of findings</td>
+            </tr>
+            <tr>
+              <td>Landmark</td>
+              <td>0.706</td>
+              <td>Accuracy of anatomical locations</td>
+            </tr>
+            <tr>
+              <td>Feature</td>
+              <td>0.693</td>
+              <td>Visual characteristics of abnormalities</td>
+            </tr>
+            <tr>
+              <td>Impression</td>
+              <td>0.779</td>
+              <td>Overall diagnostic conclusion</td>
+            </tr>
+            <tr>
+              <td>Overall Average</td>
+              <td>0.710</td>
+              <td>Average FORTE F1-score</td>
+            </tr>
+          </table>
+          <p class="note">In blinded Turing-test evaluations, approximately 74% of reports generated by BrainGPT were
+            deemed indistinguishable from those written by human expert radiologists.</p>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>Native 3D Processing:</strong> Addresses the "3D processing gap" by ingesting volumetric CTs
+              directly, avoiding information loss from 2D slicing.</li>
+            <li><strong>FORTE Evaluation:</strong> Pioneers the use of clinically relevant metrics over standard NLP
+              scores to gauge diagnostic accuracy.</li>
+            <li><strong>Clinical Visual Instruction Tuning (CVIT):</strong> Bridges the gap between raw volumetric data
+              and nuanced clinical text generation.</li>
+            <li><strong>Pathological Focus:</strong> Designed to filter out irrelevant anatomical area to focus on
+              small, critical pathological findings.</li>
+            <li><strong>Workflow Emulation:</strong> Mimics a radiologist's diagnostic workflow by decomposing the
+              reading process into fine-grained observations.</li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>Compute Intensive:</strong> Requires significant GPU resources for 3D processing coupled with
+                a 7B LLM.</li>
+              <li><strong>Modality Specific:</strong> Highly specialized for non-contrast brain CTs; does not easily
+                transfer to MRI without retraining.</li>
+              <li><strong>Hallucination Risks:</strong> Susceptible to hallucinating clinical findings if the visual
+                grounding fails.</li>
+              <li><strong>Metric Limitations:</strong> Even with FORTE, fully capturing nuanced reasoning of a human
+                radiologist remains challenging.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Clinical Validation Required:</strong> Must undergo rigorous site-specific validation before
+                clinical deployment.</li>
+              <li><strong>Automation Bias:</strong> Radiologists may overly rely on the generated text.</li>
+              <li><strong>Patient Privacy:</strong> Models must be trained on de-identified data to prevent PHI leakage.
+              </li>
+              <li><strong>Regulatory Compliance:</strong> No FDA/CE clearance. Strictly for research use.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Citation</h3>
+          <pre><code>@article{braingpt2024,
+  title={BrainGPT: Multimodal Large Language Models for 3D Brain CT Radiology Report Generation},
+  author={BrainGPT Research Group},
+  journal={arXiv preprint},
+  year={2024}
+}</code></pre>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- Merlin -->
+      <!-- ================================================================ -->
+      <section id="merlin" class="model-card">
+        <header class="card-header">
+          <h2>Merlin</h2>
+          <p class="subtitle">3D Vision-Language Foundation Model for Computed Tomography Interpretation</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>Merlin</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v1.0</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>3D Vision-Language Foundation Model</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>3D ResNet-152 vision encoder + multimodal alignment</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>~100M - 200M (Efficient 3D ResNet-152 vision backbone)</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>3D CT Volumes (Head, Abdomen, Chest)</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>Stanford AIMI (StanfordMIMI / Langlotz Lab)</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>Nature 2026</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Open Source</td>
+            </tr>
+            <tr>
+              <th>Repository</th>
+              <td>StanfordMIMI/Merlin on GitHub / Hugging Face</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases</h4>
+            <ul>
+              <li>Radiology Report Generation (Image-to-Text) directly from 3D CT.</li>
+              <li>Zero-shot Findings Classification (identifying pathologies without task-specific tuning).</li>
+              <li>3D Semantic Segmentation (up to 20 organs via nnU-Net integration).</li>
+              <li>Cross-Modal Retrieval (Text-to-Image / Image-to-Text).</li>
+              <li>Chronic Disease Prediction (5-year risk forecasting).</li>
+            </ul>
+            <h4>Target Users</h4>
+            <ul>
+              <li>Radiology researchers and medical AI developers.</li>
+              <li>Clinical teams seeking foundation models for downstream fine-tuning.</li>
+              <li>Institutions looking to deploy automated triaging or reporting tools.</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Unsupervised autonomous diagnostic decisions.</li>
+              <li>Real-time intraoperative processing.</li>
+              <li>Modalities outside of Computed Tomography (e.g., Ultrasound).</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Component</th>
+                <th>2D VLM approach</th>
+                <th>Merlin (3D) approach</th>
+              </tr>
+              <tr>
+                <td>Volume Handling</td>
+                <td>Slices treated independently</td>
+                <td>True 3D convolutions (i3_resnet)</td>
+              </tr>
+              <tr>
+                <td>Context Retention</td>
+                <td>Loses Z-axis anatomical context</td>
+                <td>Preserves full spatial relationships</td>
+              </tr>
+              <tr>
+                <td>Supervision</td>
+                <td>Manual expert bounding boxes/masks</td>
+                <td>Annotation-free (EHR and report text)</td>
+              </tr>
+              <tr>
+                <td>Compute Footprint</td>
+                <td>Massive for full volume processing</td>
+                <td>Optimized (Trainable on single A6000)</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">Merlin Architecture<span>3D Vision-Language Foundation Model Pipeline</span></div>
+            <div class="arch-container">
+              <div class="arch-node">3D CT Volume Input</div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">3D VISION ENCODER<span>(Inflated 3D ResNet-152 - i3_resnet)</span><span>Extracts
+                  robust cross-slice anatomical relationships</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">MULTIMODAL ALIGNMENT LAYER<span>(Aligns 3D embeddings with textual/EHR
+                  representations)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node arch-node-tasks">DOWNSTREAM TASKS<div class="task-list"><span>Zero-Shot
+                    Classification (Findings/Phenotypes)</span><span>Report Generation (Text
+                    Decoder)</span><span>Cross-Modal Retrieval</span><span>3D Semantic Segmentation</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Training Details</h3>
+          <table>
+            <tr>
+              <th>Dataset Source</th>
+              <td>Stanford University School of Medicine</td>
+            </tr>
+            <tr>
+              <th>CT Volumes</th>
+              <td>~15,331 distinct scans (>6 million CT images)</td>
+            </tr>
+            <tr>
+              <th>Textual Data</th>
+              <td>1.8+ million EHR diagnosis codes, 6+ million report tokens</td>
+            </tr>
+            <tr>
+              <th>Supervision Type</th>
+              <td>Annotation-free, multimodal contrastive learning</td>
+            </tr>
+            <tr>
+              <th>Hardware</th>
+              <td>Single NVIDIA A6000 GPU (highly optimized)</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <p class="note">Merlin was rigorously evaluated across 752 individual tasks spanning 6 clinical categories.
+          </p>
+          <table>
+            <tr>
+              <th>Task Category</th>
+              <th>Scope</th>
+              <th>Performance Context</th>
+            </tr>
+            <tr>
+              <td>Findings Classification (Zero-Shot)</td>
+              <td>31 classes</td>
+              <td>Outperforms 2D-adapted baselines</td>
+            </tr>
+            <tr>
+              <td>Phenotype Classification</td>
+              <td>692 phenotypes</td>
+              <td>High precision on patient conditions</td>
+            </tr>
+            <tr>
+              <td>Cross-Modal Retrieval</td>
+              <td>Text-to-Image</td>
+              <td>Superior multimodal alignment</td>
+            </tr>
+            <tr>
+              <td>Report Generation</td>
+              <td>Image-to-Text</td>
+              <td>Highly accurate anatomical localization</td>
+            </tr>
+            <tr>
+              <td>Semantic Segmentation</td>
+              <td>20 organs</td>
+              <td>State-of-the-art dense mask prediction</td>
+            </tr>
+            <tr>
+              <td>Chronic Disease Prediction</td>
+              <td>6 diseases</td>
+              <td>Effective 5-year risk forecasting</td>
+            </tr>
+          </table>
+          <h4>Highlighted Metrics</h4>
+          <table>
+            <tr>
+              <th>Metric</th>
+              <th>Context</th>
+              <th>Score</th>
+            </tr>
+            <tr>
+              <td>AUROC (Zero-Shot)</td>
+              <td>vs. 2D CLIP-adapted models</td>
+              <td>Up to 81.2% on 3D-native benchmarks</td>
+            </tr>
+            <tr>
+              <td>Report Grounding</td>
+              <td>Anatomical localization accuracy</td>
+              <td>Superior to traditional VLM baselines</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>Annotation-Free Supervision:</strong> Bypasses the bottleneck of manual pixel-level annotations
+              by utilizing existing EHR codes and text reports.</li>
+            <li><strong>True 3D Architecture:</strong> Uses an Inflated 3D ResNet-152 to process native volumes,
+              avoiding the pitfalls of 2.5D slice stacking.</li>
+            <li><strong>Massive Multitasking:</strong> Capable of performing 752 distinct downstream tasks from a single
+              unified representation space.</li>
+            <li><strong>Extreme Compute Efficiency:</strong> Despite operating on massive 3D volumes, trainable on a
+              single A6000 GPU.</li>
+            <li><strong>Open Source Release:</strong> Completely open-weights model, democratizing 3D foundation model
+              research.</li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>Dataset Bias:</strong> Pre-trained on Stanford Medicine data; may require fine-tuning for
+                different scanner protocols.</li>
+              <li><strong>EHR Noise:</strong> Relies on potentially noisy EHR diagnosis codes for supervision.</li>
+              <li><strong>Hardware Needs:</strong> 3D inference still requires more memory than standard 2D models.</li>
+              <li><strong>Complex Integration:</strong> Leveraging the full suite of 752 tasks requires deep
+                understanding of the multimodal embedding space.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Clinical Validation Required:</strong> Must undergo site-specific validation before clinical
+                deployment.</li>
+              <li><strong>Demographic Bias:</strong> Stanford patient population may not represent global or rural
+                clinical demographics.</li>
+              <li><strong>Regulatory Compliance:</strong> No FDA/CE clearance. Strictly for research use.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Citation</h3>
+          <pre><code>@article{merlin2026,
+  title={Merlin: A Computed Tomography Vision-Language Foundation Model and Dataset},
+  author={Stanford AIMI (StanfordMIMI)},
+  journal={Nature},
+  year={2026},
+  doi={10.1038/s41586-026-10181-8}
+}</code></pre>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- Med3DVLM -->
+      <!-- ================================================================ -->
+      <section id="med3dvlm" class="model-card">
+        <header class="card-header">
+          <h2>Med3DVLM</h2>
+          <p class="subtitle">An Efficient Vision-Language Model for 3D Medical Image Analysis</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>Med3DVLM</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v1.0</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>3D Vision-Language Foundation Model</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>DCFormer encoder + Dual-stream MLP-Mixer projector + LLM</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>~7 Billion</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>3D Medical Volumes (General CT/MRI scans)</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>University of Florida (Yu Xin, Gorkem Can Ates, et al.)</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>arXiv (2024)</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Open Source / Academic Research</td>
+            </tr>
+            <tr>
+              <th>Repository</th>
+              <td>xin-yu-uf/Med3DVLM on GitHub</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases</h4>
+            <ul>
+              <li>3D Radiology Report Generation (Image-to-Text) spanning multiple organ systems.</li>
+              <li>Medical Visual Question Answering (VQA) for 3D volumetric images.</li>
+              <li>Efficient 3D Feature Extraction using decomposed convolution techniques.</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Real-time intraoperative surgical guidance.</li>
+              <li>2D image analysis (e.g., standard Chest X-rays) without volumetric depth.</li>
+              <li>Autonomous medical decision-making without human oversight.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Component</th>
+                <th>Standard Approach</th>
+                <th>Med3DVLM Approach</th>
+              </tr>
+              <tr>
+                <td>3D Convolutions</td>
+                <td>Standard dense 3D CNNs (High memory)</td>
+                <td>DCFormer (Decomposed 3D convolutions)</td>
+              </tr>
+              <tr>
+                <td>Multimodal Fusion</td>
+                <td>Simple linear projection</td>
+                <td>Dual-stream MLP-Mixer projector</td>
+              </tr>
+              <tr>
+                <td>Scale</td>
+                <td>Often requires >13B parameters</td>
+                <td>Optimized at ~7B parameters</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">Med3DVLM Architecture<span>Efficient 3D Representation and Multimodal
+                Alignment</span></div>
+            <div class="arch-container">
+              <div class="arch-node">3D CT / MRI Volume Input</div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">DCFORMER ENCODER<span>(Uses Decomposed 3D convolutions to efficiently capture
+                  fine-grained spatial features without massive compute)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">DUAL-STREAM MLP-MIXER PROJECTOR<span>(Fuses 3D image features with text embeddings
+                  reliably)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">7B LARGE LANGUAGE MODEL<span>(Generates the final radiology report based on
+                  context)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">Generated Radiology Report / VQA Answer</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Training Details</h3>
+          <table>
+            <tr>
+              <th>Dataset</th>
+              <td>Mixed diverse 3D datasets (e.g., M3D dataset cohorts)</td>
+            </tr>
+            <tr>
+              <th>Annotations</th>
+              <td>Paired 3D scans and textual reports/QA</td>
+            </tr>
+            <tr>
+              <th>Training Type</th>
+              <td>Multimodal instruction tuning</td>
+            </tr>
+            <tr>
+              <th>Hardware</th>
+              <td>Standard multi-GPU academic clusters</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <table>
+            <tr>
+              <th>Metric</th>
+              <th>Context / Comparison</th>
+            </tr>
+            <tr>
+              <td>METEOR Score</td>
+              <td>Significant improvements in report generation over standard baseline 3D VLMs</td>
+            </tr>
+            <tr>
+              <td>VQA Accuracy</td>
+              <td>Superior accuracy in spatial localization questions across 3D volumes</td>
+            </tr>
+            <tr>
+              <td>Compute Cost</td>
+              <td>Substantially lower FLOPS and memory usage compared to dense 3D ViT encoders</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>DCFormer Integration:</strong> Solves the notorious computational bottleneck of processing dense
+              3D volumes by decomposing 3D convolutions.</li>
+            <li><strong>Dual-Stream Projection:</strong> The MLP-Mixer ensures that rich spatial context is not lost
+              when projecting into the 1D text embedding space.</li>
+            <li><strong>Pan-Organ Focus:</strong> Designed to generalize across medical modalities and anatomies.</li>
+            <li><strong>Accessible Compute Scale:</strong> Operating at ~7B parameters makes it deployable for academic
+              and clinical research teams.</li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>Generalization Limits:</strong> Rare pathologies outside the training distribution can lead to
+                degraded report generation.</li>
+              <li><strong>Frozen LLM Trade-offs:</strong> Keeping the 7B LLM frozen can limit deep stylistic adaptation.
+              </li>
+              <li><strong>Still Compute Heavy for Edge:</strong> Processing volumetric data at 7B scale requires >24GB
+                VRAM.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Clinical Validation Required:</strong> Must undergo site-specific validation before clinical
+                deployment.</li>
+              <li><strong>Risk of Hallucination:</strong> May confidently hallucinate anatomical abnormalities.</li>
+              <li><strong>Regulatory Compliance:</strong> No FDA/CE clearance. Strictly for research use.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Citation</h3>
+          <pre><code>@article{xin2024med3dvlm,
+  title={Med3DVLM: An Efficient Vision-Language Model for 3D Medical Image Analysis},
+  author={Xin, Yu and Ates, Gorkem Can and Gong, Kuang and Shao, Wei},
+  journal={arXiv preprint},
+  year={2024}
+}</code></pre>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- RAD3D-Prefix -->
+      <!-- ================================================================ -->
+      <section id="rad3d" class="model-card">
+        <header class="card-header">
+          <h2>RAD3D-Prefix</h2>
+          <p class="subtitle">Parameter-Efficient Framework for 3D Volumetric Medical Report Generation</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>RAD3D-Prefix</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v1.0</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>Parameter-Efficient 3D Vision-Language Model</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>3D Encoder + Anomaly-Aware Prefix Module + Frozen LLM</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>~1 Billion (Utilizes LLaMA-3.2-1B backbone)</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>3D CT Volumes (Pan-organ applications)</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>Academic Researchers (International)</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>arXiv / OpenReview (2024/2025)</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Open Source / Academic Research</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases</h4>
+            <ul>
+              <li>Parameter-Efficient Report Generation directly from 3D volumetric CT scans.</li>
+              <li>Out-of-Domain Generalization for medical imaging scenarios where full fine-tuning is impossible.</li>
+              <li>Clinical Hallucination Mitigation by injecting strong, anomaly-aware clinical priors.</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Unsupervised, fully autonomous diagnostic triage.</li>
+              <li>Processing low-resolution 2D data (over-engineered for simple X-rays).</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Component</th>
+                <th>Standard Fine-Tuning</th>
+                <th>RAD3D-Prefix Approach</th>
+              </tr>
+              <tr>
+                <td>LLM Weights</td>
+                <td>Fully fine-tuned (Risk of overfitting)</td>
+                <td>100% Frozen (Maintains general capability)</td>
+              </tr>
+              <tr>
+                <td>Integration</td>
+                <td>Direct token concatenation</td>
+                <td>Anomaly-aware prefix projection</td>
+              </tr>
+              <tr>
+                <td>Model Scale</td>
+                <td>Typically requires 7B-13B+ parameters</td>
+                <td>Highly effective at the 1B parameter scale</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">RAD3D-Prefix Architecture<span>Parameter-Efficient 3D Vision-Language
+                Integration</span></div>
+            <div class="arch-container">
+              <div class="arch-node">3D CT Volume Input</div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">3D IMAGE ENCODER<span>(Extracts dense visual embeddings from the CT scan)</span>
+              </div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">ANOMALY-AWARE PREFIX LEARNING MODULE<span>(Integrates 3D embeddings with
+                  multi-label diagnostic classification logits to form 'clinical priors')</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">FROZEN LLaMA-3.2-1B BACKBONE<span>(Generates text conditioned strictly on the
+                  prefix without altering the LLM's core weights)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">Clinically Relevant Radiology Report</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Training Details</h3>
+          <table>
+            <tr>
+              <th>Dataset Focus</th>
+              <td>3D CT scan and report pairs across multiple anatomical regions</td>
+            </tr>
+            <tr>
+              <th>Training Type</th>
+              <td>Parameter-Efficient Fine-Tuning (PEFT) / Prefix Tuning</td>
+            </tr>
+            <tr>
+              <th>Trainable Params</th>
+              <td>
+                < 5% of total model parameters (Only the prefix module)</td>
+            </tr>
+            <tr>
+              <th>Hardware</th>
+              <td>Trainable on single/mid-tier GPUs (due to 1B frozen backbone)</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <table>
+            <tr>
+              <th>Metric Domain</th>
+              <th>Performance Context</th>
+            </tr>
+            <tr>
+              <td>Clinical Relevance</td>
+              <td>Outperforms several fully fine-tuned baselines by severely restricting clinical hallucination rates
+              </td>
+            </tr>
+            <tr>
+              <td>Out-of-Domain Generalization</td>
+              <td>Robust performance on external cohorts not seen during prefix-training</td>
+            </tr>
+            <tr>
+              <td>NLG Metrics</td>
+              <td>Highly competitive ROUGE and BERTScore-F1 metrics, especially when scaled to 8B variant</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>Massive Efficiency:</strong> Proves that a 1 Billion parameter model can generate highly
+              accurate 3D CT reports if properly conditioned.</li>
+            <li><strong>Anomaly-Aware Integration:</strong> Reduces the semantic gap by fusing diagnostic classification
+              logits directly into the visual prefix.</li>
+            <li><strong>Anti-Hallucination:</strong> Frozen LLM + constrained prefix drastically cuts down hallucination
+              of non-existent anomalies.</li>
+            <li><strong>Hardware Democratization:</strong> Allows small research labs to run state-of-the-art 3D report
+              generation on consumer-grade GPUs.</li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>Expressive Bottleneck:</strong> A 1B backbone may struggle with highly complex,
+                multi-paragraph reasoning compared to 13B+ models.</li>
+              <li><strong>Prefix Sensitivity:</strong> Report quality is entirely dependent on the prefix module
+                extracting the anomaly correctly.</li>
+              <li><strong>Modality Specificity:</strong> Moving from CT to MRI requires training a completely new prefix
+                module.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Clinical Validation Required:</strong> Must undergo site-specific validation before clinical
+                deployment.</li>
+              <li><strong>False Negatives:</strong> The anomaly-aware module may suppress reporting on subtle findings
+                below its threshold.</li>
+              <li><strong>Regulatory Compliance:</strong> No FDA/CE clearance. Strictly for research use.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Citation</h3>
+          <pre><code>@article{rad3dprefix2024,
+  title={RAD3D-Prefix: Parameter-Efficient 3D Volumetric Medical Report Generation},
+  author={Anonymous/Various Authors},
+  journal={arXiv preprint / OpenReview},
+  year={2024}
+}</code></pre>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- VILA-M3 -->
+      <!-- ================================================================ -->
+      <section id="vilam3" class="model-card">
+        <header class="card-header">
+          <h2>VILA-M3</h2>
+          <p class="subtitle">Enhancing Vision-Language Models with Medical Expert Knowledge</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>VILA-M3</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v1.0</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>3D Vision-Language Model / Radiology Agent</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>VILA framework + LLaMA backbone + Dynamic Expert Routing</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>8B (Also available in 3B, 13B, and 40B variants)</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>3D CT/MRI Volumes and 2D Medical Images</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>NVIDIA Research, NIH, SingHealth</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>CVPR / arXiv (2024)</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Open Source (Academic/Research Use)</td>
+            </tr>
+            <tr>
+              <th>Repository</th>
+              <td>nvme-research/VILA-M3 on GitHub (Integrated with MONAI)</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases</h4>
+            <ul>
+              <li>Complex Radiology Report Generation from 3D volumetric scans.</li>
+              <li>Medical Visual Question Answering (VQA) requiring precise anatomical grounding.</li>
+              <li>Dynamic Task Routing: Triggering expert models (VISTA3D, MONAI BraTS) for segmentation/measurement to
+                inform text generation.</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Real-time diagnostic decision-making without a clinician.</li>
+              <li>Sole deployment without access to its requisite expert tools.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Component</th>
+                <th>Standard Medical VLM</th>
+                <th>VILA-M3</th>
+              </tr>
+              <tr>
+                <td>Knowledge Base</td>
+                <td>Implicitly memorized in LLM weights</td>
+                <td>Explicitly retrieved via external Expert Models</td>
+              </tr>
+              <tr>
+                <td>Generation Style</td>
+                <td>Direct end-to-end generation</td>
+                <td>Agentic, multi-step synthesis</td>
+              </tr>
+              <tr>
+                <td>Integration</td>
+                <td>Standalone</td>
+                <td>Deeply integrated into the MONAI ecosystem</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">VILA-M3 Architecture<span>Vision-Language Radiology Agent Pipeline</span></div>
+            <div class="arch-container">
+              <div class="arch-node">3D CT / MRI Input</div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">VILA VISION ENCODER<span>(Processes base visual context into latent space)</span>
+              </div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">DYNAMIC EXPERT ROUTER (Agent)<span>(Determines if specialized segmentation or
+                  measurement is needed before generating text)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-row">
+                <div class="arch-node arch-node-sm">VISTA3D (CT Seg)</div>
+                <div class="arch-node arch-node-sm">BraTS (MRI Seg)</div>
+              </div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">LLaMA-3 BACKBONE (8B)<span>(Synthesizes the base visual context with the hard data
+                  from the expert tools to generate grounded text)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">Highly Grounded Radiology Report</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Training Details</h3>
+          <table>
+            <tr>
+              <th>Base Model</th>
+              <td>Pre-trained VILA (Vision-Language) foundation</td>
+            </tr>
+            <tr>
+              <th>LLM Backbone</th>
+              <td>LLaMA-2 / LLaMA-3 (Depending on variant size)</td>
+            </tr>
+            <tr>
+              <th>Expert Tools</th>
+              <td>VISTA3D, Auto3DSeg, and other MONAI Zoo models</td>
+            </tr>
+            <tr>
+              <th>Hardware</th>
+              <td>Multi-node NVIDIA DGX clusters</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <table>
+            <tr>
+              <th>Metric Domain</th>
+              <th>Performance vs. Baselines</th>
+            </tr>
+            <tr>
+              <td>Grounded Report Generation</td>
+              <td>Significantly outperforms models of equivalent size by eliminating hallucinated measurements (relying
+                on actual segmentation outputs)</td>
+            </tr>
+            <tr>
+              <td>Medical VQA</td>
+              <td>State-of-the-art on complex spatial questions (e.g., "What is the exact volume of the tumor?")</td>
+            </tr>
+            <tr>
+              <td>Compute Efficiency</td>
+              <td>8B variant performs competitively with 70B generalist models when equipped with its expert tools</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>Radiology Agent Paradigm:</strong> Moves away from simple prompt-response toward a multi-step,
+              tool-using agent architecture.</li>
+            <li><strong>Expert Tool Integration:</strong> Interfaces with specialized models (VISTA3D) rather than
+              relearning their capabilities.</li>
+            <li><strong>Reduced Hallucinations:</strong> Offloads tasks like counting lesions to deterministic expert
+              tools.</li>
+            <li><strong>Multiple Parameter Scales:</strong> Available across 3B, 8B, 13B, and 40B scales.</li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>System Complexity:</strong> Deploying VILA-M3 requires the entire suite of expert tools.</li>
+              <li><strong>Latency:</strong> Multi-step agentic process increases inference time.</li>
+              <li><strong>Tool Dependency:</strong> VLM accuracy is bottlenecked by the accuracy of the expert tool it
+                calls.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Clinical Validation Required:</strong> Must undergo site-specific validation.</li>
+              <li><strong>Cascading Errors:</strong> If an expert tool makes a segmentation error, the LLM will
+                synthesize that error into the report.</li>
+              <li><strong>Regulatory Compliance:</strong> No FDA/CE clearance. Strictly for research use.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Citation</h3>
+          <pre><code>@inproceedings{vilam32024,
+  title={VILA-M3: Enhancing Vision-Language Models with Medical Expert Knowledge},
+  author={Nath, Vishwesh and others},
+  booktitle={Proceedings of IEEE/CVF CVPR},
+  year={2024}
+}</code></pre>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- MedGemma 1.5 -->
+      <!-- ================================================================ -->
+      <section id="medgemma15" class="model-card">
+        <header class="card-header">
+          <h2>MedGemma 1.5</h2>
+          <p class="subtitle">Open-Source Multimodal Medical AI Model for 3D and High-Dimensional Imaging</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>MedGemma 1.5</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v1.5</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>Multimodal Medical Foundation Model</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>Built on Gemma 3 architecture with specialized medical modality encoders</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>4B (Compute-efficient multimodal variant)</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>3D CT/MRI Volumes, Whole-Slide Histopathology (WSI), Longitudinal X-rays, EHR</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>Google</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>2025</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Open Weights / Research and Developer Use</td>
+            </tr>
+            <tr>
+              <th>Repository</th>
+              <td>Hugging Face / Google Cloud Vertex AI</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases</h4>
+            <ul>
+              <li>3D Radiology Report Generation: Native interpretation of 3D CT and MRI volumetric representations.
+              </li>
+              <li>Multimodal Clinical QA: Data-driven responses based on images and unstructured EHR.</li>
+              <li>Anatomical Localization: Using bounding boxes to locate specific pathologies within the 3D volume.
+              </li>
+              <li>Longitudinal Analysis: Comparing current chest scans against historical data over time.</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Sole basis for clinical decision making (Not a medical device).</li>
+              <li>Autonomous diagnosis without physician oversight.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Component</th>
+                <th>Standard Medical VLM</th>
+                <th>MedGemma 1.5</th>
+              </tr>
+              <tr>
+                <td>Dimensionality</td>
+                <td>Restricted to 2D slices</td>
+                <td>Native 3D volumetric analysis</td>
+              </tr>
+              <tr>
+                <td>Model Scale</td>
+                <td>Requires massive scale (>13B)</td>
+                <td>Highly optimized at 4 Billion parameters</td>
+              </tr>
+              <tr>
+                <td>Deployment</td>
+                <td>Cloud-dependent</td>
+                <td>Can run locally for privacy-preserving workflows</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">MedGemma 1.5 Architecture<span>Efficient Gemma 3 Multimodal Medical Backbone</span>
+            </div>
+            <div class="arch-container">
+              <div class="arch-node">Multimodal Medical Inputs<span>[ 3D CT/MRI ] [ Histopathology ] [ Text / EHR Docs
+                  ]</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">SPECIALIZED MEDICAL VISION ENCODERS<span>(Capable of ingesting dense volumetric
+                  data without destroying cross-slice context, unlike 2D models)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">GEMMA 3 BASE LLM (4B Params)<span>(Highly efficient language decoder deeply
+                  fine-tuned on medical literature, QA pairs, and radiology reports)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">Generated Report / Grounded Bounding Boxes / VQA</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Training Details</h3>
+          <table>
+            <tr>
+              <th>Foundation</th>
+              <td>Google's Gemma 3 architecture</td>
+            </tr>
+            <tr>
+              <th>Datasets</th>
+              <td>Massive proprietary and open medical datasets spanning radiology, pathology, and EHR</td>
+            </tr>
+            <tr>
+              <th>Hardware</th>
+              <td>Google TPU v5 pods</td>
+            </tr>
+          </table>
+          <h4>Performance Improvements over v1.0</h4>
+          <table>
+            <tr>
+              <th>Metric</th>
+              <th>Improvement</th>
+            </tr>
+            <tr>
+              <td>3D MRI Condition Classification</td>
+              <td>+11% absolute improvement</td>
+            </tr>
+            <tr>
+              <td>3D CT Condition Classification</td>
+              <td>+3% absolute improvement</td>
+            </tr>
+            <tr>
+              <td>Whole-Slide Imaging</td>
+              <td>Vastly enhanced high-resolution handling</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <table>
+            <tr>
+              <th>Metric Domain</th>
+              <th>Performance Context</th>
+            </tr>
+            <tr>
+              <td>3D Image Interpretation</td>
+              <td>Strong gains in identifying conditions in native 3D CT/MRI spaces vs. slice-by-slice processing</td>
+            </tr>
+            <tr>
+              <td>Local Deployability</td>
+              <td>Operates in resource-constrained environments due to 4B parameter footprint</td>
+            </tr>
+            <tr>
+              <td>Document Understanding</td>
+              <td>High accuracy extracting clinical variables from unstructured medical text and PDFs</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>Native 3D Processing at 4B Scale:</strong> Shatters the assumption that processing 3D CT/MRI
+              requires models exceeding 10B parameters.</li>
+            <li><strong>True Multimodality:</strong> Handles whole-slide histopathology and complex longitudinal
+              tracking beyond radiology.</li>
+            <li><strong>Open-Weight Ecosystem:</strong> Released on Model Garden and Hugging Face, democratizing
+              enterprise-grade 3D medical AI.</li>
+            <li><strong>Anatomical Grounding:</strong> Explicitly localizes findings via bounding boxes rather than
+              abstract text.</li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>Diagnostic Authority:</strong> Foundational developer tool, not an FDA-cleared diagnostic
+                device.</li>
+              <li><strong>Complex Reasoning:</strong> At 4B, may struggle with deep multi-paragraph reasoning seen in
+                70B+ models.</li>
+              <li><strong>Modality Specifics:</strong> Extremely high-resolution volumes may require preprocessing.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Human-in-the-Loop:</strong> Safety guidelines mandate human expert review for all outputs.
+              </li>
+              <li><strong>Algorithmic Bias:</strong> Must validate on local demographics.</li>
+              <li><strong>Data Privacy:</strong> Local deployment represents a step forward for patient data privacy.
+              </li>
+            </ul>
+          </div>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- Qwen3.5-27B -->
+      <!-- ================================================================ -->
+      <section id="qwen35" class="model-card">
+        <header class="card-header">
+          <h2>Qwen3.5-27B</h2>
+          <p class="subtitle">Dense Large Language Model for Advanced Reasoning and Medical NLP</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>Qwen3.5-27B</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v3.5</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>Large Language Model (LLM)</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>Dense Transformer with Gated DeltaNet Hybrid Attention (Non-MoE)</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>~27 Billion (all activated per forward pass)</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>Text / Vision (with VL variant)</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>Alibaba Cloud (Qwen Team)</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>Qwen Technical Report (February 2026)</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Apache 2.0</td>
+            </tr>
+            <tr>
+              <th>Repository</th>
+              <td>Qwen/Qwen3.5-27B on Hugging Face</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases (Medical Domain)</h4>
+            <ul>
+              <li>Advanced clinical reasoning: Analyzing complex neurological cases and patient histories.</li>
+              <li>Radiology workflow automation: Generating impressions from structured findings of Brain CTs and MRIs.
+              </li>
+              <li>Medical chatbots: Powering AI assistants for neurologists and radiologists.</li>
+              <li>Cross-modal retrieval: Embedding-based search across large radiology report databases.</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Autonomous patient diagnosis without clinical oversight.</li>
+              <li>Direct interpretation of raw DICOM images (requires the VL variant).</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Network Type</th>
+                <td>Dense Decoder-Only Transformer</td>
+              </tr>
+              <tr>
+                <th>Attention</th>
+                <td>Gated Delta Networks (Hybrid Attention)</td>
+              </tr>
+              <tr>
+                <th>Context Window</th>
+                <td>262,144 tokens (native)</td>
+              </tr>
+              <tr>
+                <th>Max Output</th>
+                <td>66,000 tokens</td>
+              </tr>
+              <tr>
+                <th>Quantization</th>
+                <td>GGUF, AWQ, FP8 supported</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">Qwen3.5-27B Architecture<span>Dense LLM Pipeline (All 27B Parameters Active Per
+                Token)</span></div>
+            <div class="arch-container">
+              <div class="arch-node">Text / Instruction Input (up to 262K tokens)</div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">TOKEN EMBEDDING + RoPE<span>(Rotary Positional Embedding for long-context
+                  awareness)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">GATED DELTANET HYBRID ATTENTION LAYERS<span>(Dense transformer blocks -- all 27B
+                  parameters activated per token for maximum reasoning density)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">SwiGLU FFN + RMSNorm<span>(Feed-forward layers with gated linear units and root
+                  mean square normalization)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">Autoregressive Text Output (Clinical Reports / Reasoning)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <h4>General Reasoning</h4>
+          <table>
+            <tr>
+              <th>Benchmark</th>
+              <th>Score</th>
+              <th>Notes</th>
+            </tr>
+            <tr>
+              <td>SWE-bench Verified</td>
+              <td>72.4</td>
+              <td>Competitive with GPT-5 mini</td>
+            </tr>
+            <tr>
+              <td>GPQA Diamond</td>
+              <td>85.8%</td>
+              <td>Graduate-level science QA</td>
+            </tr>
+            <tr>
+              <td>IFBench</td>
+              <td>75.6%</td>
+              <td>Instruction following</td>
+            </tr>
+            <tr>
+              <td>Long-Context Reasoning</td>
+              <td>77.7%</td>
+              <td>Key for processing full patient EHRs</td>
+            </tr>
+          </table>
+          <h4>Brain, CT, MRI Relevance</h4>
+          <table>
+            <tr>
+              <th>Task</th>
+              <th>Modality</th>
+              <th>Performance</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Neurology Case QA</td>
+              <td>Text</td>
+              <td>Exceptional</td>
+              <td>High accuracy on MedQA / USMLE-style questions</td>
+            </tr>
+            <tr>
+              <td>Report Structuring</td>
+              <td>Text (MRI/CT Reports)</td>
+              <td>High Fidelity</td>
+              <td>Converts unstructured dictates into standardized templates</td>
+            </tr>
+            <tr>
+              <td>Protocol Generation</td>
+              <td>Text</td>
+              <td>High Agreement</td>
+              <td>Matches expert radiologist decisions for Brain MRI protocols</td>
+            </tr>
+            <tr>
+              <td>Longitudinal Analysis</td>
+              <td>Text (Serial Reports)</td>
+              <td>Strong</td>
+              <td>262K context enables comparison across years of imaging reports</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>High Reasoning Density:</strong> All 27B parameters activated per token for robust medical
+              deductions vs. MoE models.</li>
+            <li><strong>Massive Context Window:</strong> 262K tokens allows processing extensive longitudinal brain
+              imaging reports in a single prompt.</li>
+            <li><strong>Gated DeltaNet Attention:</strong> Hybrid attention for improved long-sequence processing
+              efficiency.</li>
+            <li><strong>Open-Weight Ecosystem:</strong> Apache 2.0 with GGUF/AWQ/FP8 for local hospital deployment.</li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>Resource Requirements:</strong> ~54GB VRAM full precision; quantization needed for consumer
+                hardware.</li>
+              <li><strong>Text-Only Base:</strong> Requires VL variant for direct image interpretation.</li>
+              <li><strong>Hallucination Risks:</strong> May invent findings without strict institutional guidelines in
+                prompt.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Data Privacy:</strong> Local deployment recommended for sensitive neurological data.</li>
+              <li><strong>Verification:</strong> AI-generated impressions must be verified by licensed physicians.</li>
+              <li><strong>Regulatory Compliance:</strong> No FDA/CE clearance. Research use only.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Citation</h3>
+          <pre><code>@article{qwen3.5,
+  title={Qwen3.5 Technical Report},
+  author={Qwen Team, Alibaba Cloud},
+  journal={arXiv preprint},
+  year={2026}
+}</code></pre>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- Qwen2.5-7B-Instruct -->
+      <!-- ================================================================ -->
+      <section id="qwen25" class="model-card">
+        <header class="card-header">
+          <h2>Qwen2.5-7B-Instruct</h2>
+          <p class="subtitle">Large Language Model for General and Medical Instruction Following</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>Qwen2.5-7B-Instruct</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v2.5</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>Large Language Model (LLM)</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>Dense Transformer (GQA + SwiGLU + RoPE + RMSNorm)</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>~7.61 Billion (6.53B non-embedding)</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>Text Only (Requires Qwen2.5-VL for vision tasks)</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>Alibaba Cloud (Qwen Team)</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>Qwen2.5 Technical Report (2024)</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Apache 2.0</td>
+            </tr>
+            <tr>
+              <th>Repository</th>
+              <td>Qwen/Qwen2.5-7B-Instruct on Hugging Face</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases (Medical Domain)</h4>
+            <ul>
+              <li>Clinical protocoling: Automating brain MRI scanning protocols from clinical request forms.</li>
+              <li>Medical documentation: Summarizing patient records, EHR navigation, entity extraction.</li>
+              <li>Medical QA: Answering clinical queries about neurology guidelines.</li>
+              <li>Report summarization: Condensing neuroradiology reports into concise impressions.</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Direct image processing (requires multimodal Qwen2.5-VL variant).</li>
+              <li>Autonomous clinical diagnosis.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Transformer Layers</th>
+                <td>28</td>
+              </tr>
+              <tr>
+                <th>Query Heads</th>
+                <td>28</td>
+              </tr>
+              <tr>
+                <th>Key/Value Heads</th>
+                <td>4 (Grouped-Query Attention)</td>
+              </tr>
+              <tr>
+                <th>Activation</th>
+                <td>SwiGLU</td>
+              </tr>
+              <tr>
+                <th>Normalization</th>
+                <td>RMSNorm</td>
+              </tr>
+              <tr>
+                <th>Positional Embedding</th>
+                <td>RoPE</td>
+              </tr>
+              <tr>
+                <th>Context Window</th>
+                <td>Up to 128K tokens</td>
+              </tr>
+              <tr>
+                <th>Training Tokens</th>
+                <td>18 Trillion</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">Qwen2.5-7B-Instruct Architecture<span>Instruction-Tuned Dense Transformer LLM</span>
+            </div>
+            <div class="arch-container">
+              <div class="arch-node">Instruction and Context Text Input</div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">TOKEN EMBEDDING + RoPE<span>(Rotary Positional Embedding supporting up to 128K
+                  context)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">GROUPED-QUERY ATTENTION (GQA)<span>(28 query heads, 4 KV heads -- efficient
+                  multi-head attention with key-value sharing)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">SwiGLU FEED-FORWARD NETWORK<span>(Gated linear unit activation replacing standard
+                  ReLU/GeLU for improved representation)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">RMSNorm + RESIDUAL (x28 Layers)<span>(Root mean square normalization with residual
+                  connections across all 28 stacked transformer layers)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">Autoregressive Output (Instruction Following / Medical Text)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <h4>General Benchmarks</h4>
+          <table>
+            <tr>
+              <th>Benchmark</th>
+              <th>Score</th>
+              <th>Notes</th>
+            </tr>
+            <tr>
+              <td>MMLU</td>
+              <td>74.2</td>
+              <td>Massive Multitask Language Understanding</td>
+            </tr>
+            <tr>
+              <td>HumanEval</td>
+              <td>Strong</td>
+              <td>Competitive code generation at 7B</td>
+            </tr>
+          </table>
+          <h4>Brain, CT, MRI Relevance</h4>
+          <table>
+            <tr>
+              <th>Task</th>
+              <th>Modality</th>
+              <th>Performance</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>MRI Protocoling</td>
+              <td>Text (Brain MRI)</td>
+              <td>High Accuracy</td>
+              <td>Assigns standard brain MRI protocols with institutional guidelines as context</td>
+            </tr>
+            <tr>
+              <td>Report Summarization</td>
+              <td>Text (CT/MRI Reports)</td>
+              <td>ROUGE-L > 50.0</td>
+              <td>Summarizes complex neurological findings into concise impressions</td>
+            </tr>
+            <tr>
+              <td>Medical Reasoning</td>
+              <td>Text</td>
+              <td>MedQA ~70%+</td>
+              <td>Competitive medical reasoning at 7B scale</td>
+            </tr>
+            <tr>
+              <td>Entity Extraction</td>
+              <td>Text (Neuroradiology)</td>
+              <td>High</td>
+              <td>Extracts anatomical landmarks, findings, and measurements</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>Grouped-Query Attention:</strong> 28Q / 4KV heads dramatically reduce inference memory while
+              maintaining quality.</li>
+            <li><strong>SwiGLU Activation:</strong> Gated linear unit improving capacity for complex clinical
+              terminology.</li>
+            <li><strong>18T Token Pre-training:</strong> Broad coverage of scientific and medical literature for strong
+              zero-shot medical performance.</li>
+            <li><strong>Multilingual Clinical Support:</strong> Exceptional for non-English medical records and reports.
+            </li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>Text-Only:</strong> Cannot interpret brain scans directly; relies on textual descriptions.
+              </li>
+              <li><strong>Hallucination Risks:</strong> May invent protocols without strict guidelines in prompt.</li>
+              <li><strong>7B Scale Constraints:</strong> Complex multi-paragraph reasoning less robust than 70B+ models.
+              </li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Automation Bias:</strong> Clinicians must verify generated MRI protocols.</li>
+              <li><strong>Patient Privacy:</strong> De-identify prompts; local deployment recommended.</li>
+              <li><strong>Regulatory Compliance:</strong> No FDA/CE clearance. Research use only.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Citation</h3>
+          <pre><code>@article{qwen2.5,
+  title={Qwen2.5 Technical Report},
+  author={Qwen Team, Alibaba Cloud},
+  journal={arXiv preprint arXiv:2412.15115},
+  year={2024}
+}</code></pre>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- RadFM -->
+      <!-- ================================================================ -->
+      <section id="radfm" class="model-card">
+        <header class="card-header">
+          <h2>RadFM</h2>
+          <p class="subtitle">Towards Generalist Foundation Model for Radiology by Leveraging Web-scale 2D and 3D
+            Medical Data</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>RadFM (Radiology Foundation Model)</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v1.0</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>Generalist Vision-Language Model (VLM)</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>Adapted ViT Vision Encoder + Perceiver Resampler + LLaMA-based LLM</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>~14 Billion</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>Text, 2D Images (X-ray, Ultrasound), 3D Volumes (Brain CT, MRI)</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>Shanghai AI Laboratory / Academic Researchers</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>arXiv:2308.02463 (2023)</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Apache 2.0 (Research Use)</td>
+            </tr>
+            <tr>
+              <th>Repository</th>
+              <td>chaoyi-wu/RadFM on GitHub</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases</h4>
+            <ul>
+              <li>Medical Visual Question Answering (VQA) across both 2D and 3D modalities.</li>
+              <li>Radiology report generation for CT and MRI scans including 3D Brain volumes.</li>
+              <li>Disease diagnosis and abnormality identification in 3D Brain MRI and CT.</li>
+              <li>Rationale diagnosis generation: Providing reasoning chains for findings.</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Fully autonomous diagnostic decision-making without clinical oversight.</li>
+              <li>High-precision spatial grounding without targeted fine-tuning.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Vision Encoder</th>
+                <td>Modified ViT for 2D images and 3D volumetric data</td>
+              </tr>
+              <tr>
+                <th>Feature Alignment</th>
+                <td>Perceiver Resampler</td>
+              </tr>
+              <tr>
+                <th>LLM Backbone</th>
+                <td>LLaMA-based generative model</td>
+              </tr>
+              <tr>
+                <th>Pre-training Data</th>
+                <td>MedMD: 16M 2D and 3D medical images</td>
+              </tr>
+              <tr>
+                <th>Fine-tuning Data</th>
+                <td>RadMD: 3M radiologic visual-language pairs</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">RadFM Architecture<span>Generalist 2D and 3D Radiology Foundation Model</span></div>
+            <div class="arch-container">
+              <div class="arch-row">
+                <div class="arch-node arch-node-sm">2D Medical Images<span>(X-ray, Ultrasound)</span></div>
+                <div class="arch-node arch-node-sm">3D Medical Volumes<span>(Brain CT, Brain MRI)</span></div>
+              </div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">UNIFIED 2D AND 3D VISION ENCODER<span>(Adapted Vision Transformer capable of
+                  extracting features from both 2D slices and 3D volumetric data)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">PERCEIVER RESAMPLER<span>(Aligns multi-scale visual features to the language
+                  embedding space)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">LLaMA-BASED LARGE LANGUAGE MODEL<span>(Generates reports, answers, and diagnoses
+                  conditioned on visual and text context)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">Radiology Report / VQA Answer / Rationale Diagnosis</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Training Details</h3>
+          <h4>Pre-training</h4>
+          <table>
+            <tr>
+              <th>Dataset</th>
+              <td>MedMD (Medical Multimodal Dataset)</td>
+            </tr>
+            <tr>
+              <th>Scale</th>
+              <td>16 million 2D and 3D medical scans paired with text</td>
+            </tr>
+            <tr>
+              <th>Coverage</th>
+              <td>Brain, thorax, abdomen, musculoskeletal</td>
+            </tr>
+          </table>
+          <h4>Fine-tuning</h4>
+          <table>
+            <tr>
+              <th>Dataset</th>
+              <td>RadMD (Radiologic Multimodal Dataset)</td>
+            </tr>
+            <tr>
+              <th>Scale</th>
+              <td>3 million curated radiologic visual-language pairs</td>
+            </tr>
+            <tr>
+              <th>Tasks</th>
+              <td>VQA, report generation, disease diagnosis, rationale generation</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <p class="note">Evaluated on a new benchmark comprising 5 clinical tasks. Results show significant
+            outperformance of existing multimodal models (OpenFlamingo, MedVInT).</p>
+          <table>
+            <tr>
+              <th>Task</th>
+              <th>Modality</th>
+              <th>Performance</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>Medical VQA</td>
+              <td>2D + 3D (CT, MRI)</td>
+              <td>Outperforms all baselines</td>
+              <td>Accurate responses to clinical questions about brain scans</td>
+            </tr>
+            <tr>
+              <td>Report Generation</td>
+              <td>3D Head CT / Brain MRI</td>
+              <td>Strong (BLEU/ROUGE)</td>
+              <td>Coherent clinical descriptions from 3D brain volumes</td>
+            </tr>
+            <tr>
+              <td>Disease Diagnosis</td>
+              <td>CT / MRI</td>
+              <td>High</td>
+              <td>Accurate classification of neurological abnormalities</td>
+            </tr>
+            <tr>
+              <td>Brain Anomaly Detection</td>
+              <td>3D Brain MRI</td>
+              <td>~78.4% Accuracy</td>
+              <td>Zero-shot neurological abnormality detection</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>2D and 3D Unification:</strong> First foundation model to seamlessly integrate 2D and 3D medical
+              data into a single framework.</li>
+            <li><strong>MedMD Dataset:</strong> Pre-trained on 16 million paired medical images and text.</li>
+            <li><strong>Multi-Task Generalist:</strong> VQA, report gen, diagnosis, and rationale from a single
+              checkpoint.</li>
+            <li><strong>Zero-Shot Generalization:</strong> Strong performance on unseen clinical tasks out-of-the-box.
+            </li>
+            <li><strong>Open Source:</strong> Code, data, and checkpoints publicly available.</li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>Spatial Localization:</strong> Struggles with bounding boxes around brain lesions without
+                fine-tuning.</li>
+              <li><strong>Long Report Coherence:</strong> Challenges with lengthy clinical reports.</li>
+              <li><strong>Compute Heavy:</strong> 14B params with 3D volumes demands significant GPU resources.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Clinical Validation Required:</strong> Must undergo site-specific validation.</li>
+              <li><strong>Bias:</strong> Performance may vary by demographic distribution in MedMD.</li>
+              <li><strong>Regulatory Compliance:</strong> No FDA/CE clearance. Research use only.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Citation</h3>
+          <pre><code>@article{wu2023radfm,
+  title={Towards Generalist Foundation Model for Radiology
+         by Leveraging Web-scale 2D and 3D Medical Data},
+  author={Wu, Chaoyi and Zhang, Xiaoman and Zhang, Ya
+          and Wang, Yanfeng and Xie, Weidi},
+  journal={arXiv preprint arXiv:2308.02463},
+  year={2023}
+}</code></pre>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+      <!-- ================================================================ -->
+      <!-- MedGemma 27B -->
+      <!-- ================================================================ -->
+      <section id="medgemma27" class="model-card">
+        <header class="card-header">
+          <h2>MedGemma 27B</h2>
+          <p class="subtitle">Open-Model Medical Vision-Language Foundation Model</p>
+        </header>
+        <div class="section-block glass panel">
+          <h3>Model Overview</h3>
+          <table>
+            <tr>
+              <th>Model Name</th>
+              <td>MedGemma 27B (Multimodal)</td>
+            </tr>
+            <tr>
+              <th>Version</th>
+              <td>v1.5 / Gemma 3-based</td>
+            </tr>
+            <tr>
+              <th>Model Type</th>
+              <td>Multimodal Large Language Model (MLLM)</td>
+            </tr>
+            <tr>
+              <th>Architecture</th>
+              <td>MedSigLIP Vision Encoder + Gemma 3 (27B) LLM Backbone</td>
+            </tr>
+            <tr>
+              <th>Parameters</th>
+              <td>~27 Billion</td>
+            </tr>
+            <tr>
+              <th>Input Modality</th>
+              <td>3D CT/MRI Volumes, 2D Medical Images, Text, WSI</td>
+            </tr>
+            <tr>
+              <th>Developer</th>
+              <td>Google Research / Google DeepMind</td>
+            </tr>
+            <tr>
+              <th>Publication</th>
+              <td>Google DeepMind Technical Reports (2024-2025)</td>
+            </tr>
+            <tr>
+              <th>License</th>
+              <td>Open Weights (Research / Developer Use)</td>
+            </tr>
+            <tr>
+              <th>Repository</th>
+              <td>google/medgemma-27b on Hugging Face / Vertex AI</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Intended Use</h3>
+            <h4>Primary Use Cases</h4>
+            <ul>
+              <li>3D radiology interpretation: Processing Brain CT/MRI volumes for report generation and anomaly
+                detection.</li>
+              <li>Complex clinical reasoning: Interpreting multi-modal patient data (images + EHR).</li>
+              <li>Medical research: Open-weight baseline for advanced healthcare AI.</li>
+              <li>Chest X-ray report generation with clinical management-grade accuracy.</li>
+              <li>Whole-slide histopathology analysis and longitudinal imaging comparison.</li>
+            </ul>
+            <h4>Out-of-Scope Uses</h4>
+            <ul>
+              <li>Primary clinical diagnosis without regulatory approval.</li>
+              <li>Fully automated triage of critical neurological emergencies.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Architecture Details</h3>
+            <table>
+              <tr>
+                <th>Vision Encoder</th>
+                <td>MedSigLIP -- Medically-tuned SigLIP vision tower</td>
+              </tr>
+              <tr>
+                <th>LLM Backbone</th>
+                <td>Gemma 3 (27B) dense instruction-tuned model</td>
+              </tr>
+              <tr>
+                <th>3D Processing</th>
+                <td>3D spatial adapters for native volumetric interpretation</td>
+              </tr>
+              <tr>
+                <th>Evaluation Scope</th>
+                <td>6 medical image modalities across 22+ datasets</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Architecture Diagram</h3>
+          <div class="arch-pipeline">
+            <div class="arch-title">MedGemma 27B Architecture<span>Open Multimodal Medical Foundation Model</span></div>
+            <div class="arch-container">
+              <div class="arch-node">Multimodal Medical Inputs<span>[ 3D Brain CT/MRI ] [ 2D Radiology ] [ Text / EHR ]
+                  [ Histopathology ]</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">MedSigLIP VISION ENCODER<span>(Medically-tuned SigLIP vision tower -- specialized
+                  for recognizing pathological features in medical imagery)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">3D SPATIAL ADAPTERS<span>(Preserves volumetric geometry from native 3D CT/MRI
+                  without destructive 2D slicing)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">GEMMA 3 LLM BACKBONE (27B Params)<span>(Dense instruction-tuned language model
+                  deeply fine-tuned on medical literature, QA pairs, and radiology reports)</span></div>
+              <div class="arch-arrow"></div>
+              <div class="arch-node">Clinical Report / VQA Answer / Grounded Diagnosis</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-block glass panel">
+          <h3>Training Details</h3>
+          <table>
+            <tr>
+              <th>Foundation</th>
+              <td>Google's Gemma 3 architecture</td>
+            </tr>
+            <tr>
+              <th>Datasets</th>
+              <td>Massive proprietary and open medical datasets</td>
+            </tr>
+            <tr>
+              <th>Vision Training</th>
+              <td>MedSigLIP encoder on large-scale medical image-text pairs</td>
+            </tr>
+            <tr>
+              <th>Hardware</th>
+              <td>Google TPU v5 pods</td>
+            </tr>
+          </table>
+          <h4>Performance Improvements over v1.0</h4>
+          <table>
+            <tr>
+              <th>Metric</th>
+              <th>Improvement</th>
+            </tr>
+            <tr>
+              <td>3D MRI Condition Classification</td>
+              <td>+11% absolute improvement</td>
+            </tr>
+            <tr>
+              <td>3D CT Condition Classification</td>
+              <td>+3% absolute improvement</td>
+            </tr>
+            <tr>
+              <td>Chest X-ray Finding Classification</td>
+              <td>+15.5 to 18.1% over base Gemma 3</td>
+            </tr>
+            <tr>
+              <td>MedQA Accuracy</td>
+              <td>+5% improvement over v1.0</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Benchmark Performance</h3>
+          <h4>Clinical Diagnostic Metrics</h4>
+          <table>
+            <tr>
+              <th>Benchmark</th>
+              <th>Score</th>
+              <th>Notes</th>
+            </tr>
+            <tr>
+              <td>MedQA (USMLE)</td>
+              <td>87.7%</td>
+              <td>State-of-the-art for open-weight medical LLMs</td>
+            </tr>
+            <tr>
+              <td>Chest X-ray Report Quality</td>
+              <td>81% radiologist-approved</td>
+              <td>Judged sufficient for clinical management</td>
+            </tr>
+            <tr>
+              <td>EHRQA</td>
+              <td>+22% over v1.0</td>
+              <td>Electronic health record question answering</td>
+            </tr>
+          </table>
+          <h4>Brain, CT, MRI and 3D Volume Processing</h4>
+          <table>
+            <tr>
+              <th>Task</th>
+              <th>Modality</th>
+              <th>Performance</th>
+              <th>Description</th>
+            </tr>
+            <tr>
+              <td>3D Report Generation</td>
+              <td>Head CT / Brain MRI</td>
+              <td>State-of-the-Art (Open)</td>
+              <td>Cohesive findings from 3D volumes without 2D slicing</td>
+            </tr>
+            <tr>
+              <td>3D CT Classification</td>
+              <td>3D CT Volumes</td>
+              <td>+3% over v1.0</td>
+              <td>Improved condition classification on native 3D CT</td>
+            </tr>
+            <tr>
+              <td>3D MRI Classification</td>
+              <td>3D Brain MRI</td>
+              <td>+11% over v1.0</td>
+              <td>Significant improvement in neurological condition classification</td>
+            </tr>
+            <tr>
+              <td>Visual QA (Neuro MRI)</td>
+              <td>Neurological MRI</td>
+              <td>High Accuracy</td>
+              <td>Answering clinical questions about lesions and tumors</td>
+            </tr>
+          </table>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Key Innovations</h3>
+          <ol>
+            <li><strong>Open-Weight Multimodal Medicine:</strong> Brings capabilities previously restricted to
+              proprietary APIs (Med-Gemini) to open-source developers.</li>
+            <li><strong>MedSigLIP Integration:</strong> Vision encoder specifically aligned to medical domains,
+              improving zero-shot radiology performance.</li>
+            <li><strong>3D Volume Support:</strong> Native high-dimensional imaging avoiding information loss from 2D
+              slicing of brain scans.</li>
+            <li><strong>87.7% MedQA:</strong> Near-expert-level on US Medical Licensing Exam questions.</li>
+            <li><strong>Multi-Modality Breadth:</strong> CT/MRI, WSI, longitudinal X-ray, and EHR from a single model.
+            </li>
+          </ol>
+        </div>
+        <div class="card-grid">
+          <div class="section-block glass panel">
+            <h3>Limitations</h3>
+            <ul>
+              <li><strong>Compute Intensive:</strong> 27B multimodal model requires multi-GPU setups for 3D volumes.
+              </li>
+              <li><strong>Diagnostic Granularity:</strong> May lack pixel-perfect precision for surgical planning.</li>
+              <li><strong>CT DICOM Handling:</strong> May default to X-ray templates with raw CT DICOM inputs.</li>
+            </ul>
+          </div>
+          <div class="section-block glass panel">
+            <h3>Ethical Considerations</h3>
+            <ul>
+              <li><strong>Safety:</strong> Developer tool, not a medical device. Independent clinical validation
+                mandatory.</li>
+              <li><strong>Bias:</strong> Must evaluate across diverse patient demographics.</li>
+              <li><strong>Regulatory Compliance:</strong> No FDA/CE clearance. Research use only.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="section-block glass panel">
+          <h3>Citation</h3>
+          <pre><code>@article{medgemma2024,
+  title={MedGemma: Open Medical Foundation Models},
+  author={Google DeepMind, Google Research},
+  journal={Google DeepMind Technical Reports},
+  year={2024}
+}</code></pre>
+        </div>
+        <p class="card-footer">Model card prepared for internal research reference -- Brain Foundation Models Lab</p>
+      </section>
+
+    </main>
+  </div>
+  <script src="script.js"></script>
+</body>
+
+</html>
